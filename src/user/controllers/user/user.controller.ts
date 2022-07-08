@@ -17,6 +17,7 @@ export class UserController {
 
   @Get()
   async getAllUsers() {
+    console.log('git test');
     return await this.userService.getAllUsers();
   }
   @Get(':id')
