@@ -38,8 +38,36 @@ export class UserDto {
 
   update_at: Date;
 
-  @IsNotEmpty()
   status: boolean;
+}
+export class UpdateDto {
+  @IsNotEmpty()
+  @MinLength(3)
+  first_name: string;
+
+  @IsNotEmpty()
+  @MinLength(3)
+  last_name: string;
+
+  @IsNumberString()
+  @IsNotEmpty()
+  phone: string;
+
+  @IsNotEmpty()
+  @IsEmail()
+  email: string;
+
+  @IsNotEmpty()
+  @MinLength(1)
+  sex: string;
+
+  // @IsNotEmpty()
+  // @IsNumberString()
+  // country_id: number;
+
+  created_at: Date;
+
+  update_at: Date;
 }
 
 export class UserRO {
@@ -48,7 +76,6 @@ export class UserRO {
   phone: string;
   email: string;
   sex: string;
-  country_id: number;
   status: boolean;
 }
 

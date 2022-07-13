@@ -2,8 +2,8 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AxiosResponse } from 'axios';
-import { response } from 'express';
 import { map, Observable } from 'rxjs';
+import { CountryDto } from '../../../country/dto/country.dto';
 import { Repository } from 'typeorm';
 import { CountryEntity } from '../../../country/entities/country.entity';
 
@@ -38,5 +38,9 @@ export class CountryService {
   async getAllCountry(): Promise<CountryEntity[]> {
     const country = this.countryRepo.find();
     return country;
+  }
+
+  async findCountry(id: number): Promise<CountryDto> {
+    return await this.countryRepo.findOneBy({ id });
   }
 }

@@ -6,6 +6,10 @@ module.export = {
   password: 'password',
   database: 'developersDb',
   entities: ['src/**/*.entity.ts'],
-  // logging: true,
   synchronize: false,
+  seeds: ['src/database/seeds/*.ts'],
+  cli: {
+    migrationsDir: ['src/database/migrations'],
+  },
+  migrations: ['src/database/migrations/*.ts'],
 };

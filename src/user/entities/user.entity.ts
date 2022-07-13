@@ -4,8 +4,7 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
-  // OneToMany,
-  OneToOne,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -35,9 +34,6 @@ export class UserEntity {
   @Column()
   sex: string;
 
-  @Column()
-  country_id: number;
-
   @CreateDateColumn()
   created_at: Date;
 
@@ -48,22 +44,21 @@ export class UserEntity {
   status: boolean;
 
   toResponseObject(): UserRO {
-    const { first_name, last_name, phone, email, sex, status, country_id } =
-      this;
+    const { first_name, last_name, phone, email, sex, status } = this;
     const responseObject: any = {
       first_name,
       last_name,
       phone,
       email,
       sex,
-      country_id,
+
       status: (this.status = true),
     };
 
     return responseObject;
   }
 
-  @OneToOne(() => CountryEntity, (country) => country.users)
-  @JoinColumn()
-  countries: CountryEntity;
+  @ManyToOne(() => CountryEntity, (country) => country.users)
+  @JoinColumn({ name: 'country_id' })
+  country: CountryEntity;
 }

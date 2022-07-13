@@ -1,14 +1,16 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
+  ParseIntPipe,
   Post,
+  Put,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { UserEntity } from '../../../user/entities/user.entity';
-import { LoginDto, UserDto } from '../../../user/dto/user.dto';
+import { LoginDto, UpdateDto, UserDto } from '../../../user/dto/user.dto';
 import { UserService } from '../../../user/services/user/user.service';
 
 @Controller('user')
@@ -17,7 +19,6 @@ export class UserController {
 
   @Get()
   async getAllUsers() {
-    console.log('git test');
     return await this.userService.getAllUsers();
   }
   @Get(':id')
@@ -27,13 +28,27 @@ export class UserController {
 
   @Post('register')
   @UsePipes(ValidationPipe)
-  async register(@Body() data: UserDto, country: any) {
-    return await this.userService.register(data, country);
+  async register(@Body() data: UserDto) {
+    return await this.userService.register(data);
   }
 
   @Post('login')
   @UsePipes(ValidationPipe)
   async login(@Body() data: LoginDto) {
     return await this.userService.login(data);
+  }
+
+  @Put('update/:id')
+  @UsePipes(ValidationPipe)
+  async updateUser(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: UpdateDto,
+  ) {
+    return await this.userService.updateUserbyId(id, body);
+  }
+
+  @Delete('delete/:id')
+  async delete(@Param('id', ParseIntPipe) id: number) {
+    return await this.userService.delete(id);
   }
 }

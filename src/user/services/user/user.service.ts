@@ -1,10 +1,16 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { LoginDto, UserDto, UserRO } from '../../../user/dto/user.dto';
+import {
+  LoginDto,
+  UpdateDto,
+  UserDto,
+  UserRO,
+} from '../../../user/dto/user.dto';
 import { UserEntity } from '../../../user/entities/user.entity';
 import { Repository } from 'typeorm';
 import * as uuid from 'uuid';
-import { CountryEntity } from 'src/country/entities/country.entity';
+import { CountryEntity } from '../../../country/entities/country.entity';
+import { CountryService } from '../../../country/services/country/country.service';
 
 @Injectable()
 export class UserService {
@@ -13,24 +19,28 @@ export class UserService {
     private readonly userRepo: Repository<UserEntity>,
     @InjectRepository(CountryEntity)
     private readonly countryRepo: Repository<CountryEntity>,
+    private readonly countryService: CountryService,
   ) {}
 
   async getAllUsers(): Promise<UserRO[]> {
-    return await this.userRepo.find({ relations: ['countries'] });
+    return await this.userRepo.find({ relations: ['country'] });
   }
 
-  async register(data: UserDto, country: CountryEntity): Promise<UserRO> {
+  async register(data: UserDto): Promise<UserEntity> {
     const { email } = data;
-    let user = await this.userRepo.findOneBy({ email });
+    const user = await this.userRepo.findOneBy({ email });
     if (user) {
       throw new HttpException('User Already Exists', HttpStatus.BAD_REQUEST);
     }
-    user = this.userRepo.create({
-      ...data,
+
+    const country = await this.countryService.findCountry(data.country_id);
+    // console.log(country);
+
+    return this.userRepo.save({
       user_id: uuid.v4(),
-      countries: country,
+      ...data,
+      country,
     });
-    return this.userRepo.save(user);
   }
 
   async login({ email }: LoginDto): Promise<UserRO> {
@@ -47,5 +57,27 @@ export class UserService {
       return getUser;
     }
     throw new HttpException('User Not Found', HttpStatus.NOT_FOUND);
+  }
+
+  // async getUsersByountry(country: string) {}
+
+  async updateUserbyId(id: number, body: UpdateDto): Promise<UserRO[]> {
+    const user = await this.userRepo.find({
+      where: { id },
+      relations: ['country'],
+    });
+    if (user) {
+      await this.userRepo.update(id, body);
+      return user;
+    }
+    throw new HttpException('User Not Found', HttpStatus.NOT_FOUND);
+  }
+
+  async delete(id: number) {
+    const user = await this.userRepo.delete({ id });
+    if (!user.affected) {
+      throw new HttpException('User Not Found', HttpStatus.BAD_REQUEST);
+    }
+    return { msg: 'Deleted' };
   }
 }

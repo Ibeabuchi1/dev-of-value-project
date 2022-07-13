@@ -1,5 +1,5 @@
 import { UserEntity } from '../../user/entities/user.entity';
-import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('countries')
 export class CountryEntity {
@@ -15,6 +15,6 @@ export class CountryEntity {
   @Column()
   short_code: string;
 
-  @OneToOne(() => UserEntity, (user: UserEntity) => user.countries)
+  @OneToMany(() => UserEntity, (user: UserEntity) => user.country)
   users: UserEntity;
 }
