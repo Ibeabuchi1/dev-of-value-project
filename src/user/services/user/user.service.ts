@@ -18,7 +18,6 @@ export class UserService {
     @InjectRepository(UserEntity)
     private readonly userRepo: Repository<UserEntity>,
     @InjectRepository(CountryEntity)
-    private readonly countryRepo: Repository<CountryEntity>,
     private readonly countryService: CountryService,
   ) {}
 
