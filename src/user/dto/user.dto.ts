@@ -44,7 +44,6 @@ export class UserDto {
   email: string;
 
   @IsNotEmpty()
-  @MinLength()
   @ApiProperty({
     title: 'Gender',
     type: String,
