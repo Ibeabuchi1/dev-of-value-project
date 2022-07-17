@@ -10,8 +10,6 @@ import {
 } from 'typeorm';
 import * as uuid from 'uuid';
 import { UserRO } from '../dto/user.dto';
-import { Factory } from 'nestjs-seeder';
-import { randomInt } from 'crypto';
 
 @Entity('users')
 export class UserEntity {
@@ -21,23 +19,18 @@ export class UserEntity {
   @Column({ default: uuid.v4() })
   user_id: string;
 
-  @Factory((faker) => faker.name.firstName())
   @Column()
   first_name: string;
 
-  @Factory((faker) => faker.name.lastName())
   @Column()
   last_name: string;
 
-  @Factory((faker) => faker.phone.number())
   @Column()
   phone: string;
 
-  @Factory((faker) => faker.internet.email())
   @Column()
   email: string;
 
-  @Factory((faker) => faker.name.gender(true))
   @Column()
   sex: string;
 
@@ -58,13 +51,12 @@ export class UserEntity {
       phone,
       email,
       sex,
-
       status: (this.status = true),
     };
 
     return responseObject;
   }
-  @Factory(() => randomInt(1, 242))
+
   @ManyToOne(() => CountryEntity, (country) => country.users)
   @JoinColumn({ name: 'country_id' })
   country: CountryEntity;

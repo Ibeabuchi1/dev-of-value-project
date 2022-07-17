@@ -23,7 +23,6 @@ export class CountryService {
     const countries = [];
 
     getCountry.forEach((country) => {
-      //   console.log(country);
       for (let i = 0; country.length > i; i++) {
         countries.push({
           country_code: country[i]['code'],
@@ -35,8 +34,11 @@ export class CountryService {
     });
     return getCountry;
   }
-  async getAllCountry(): Promise<CountryEntity[]> {
-    const country = this.countryRepo.find();
+  async getAllCountry(page = 1): Promise<CountryEntity[]> {
+    const country = this.countryRepo.find({
+      take: 30,
+      skip: 30 * (page - 1),
+    });
     return country;
   }
 

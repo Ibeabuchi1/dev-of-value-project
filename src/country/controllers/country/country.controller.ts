@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { CountryService } from '../../../country/services/country/country.service';
 
 @Controller('country')
@@ -11,7 +11,12 @@ export class CountryController {
   }
 
   @Get('all-country')
-  getAllCountry() {
-    return this.countryService.getAllCountry();
+  getAllCountry(@Query('page') page: number) {
+    return this.countryService.getAllCountry(page);
+  }
+
+  @Get('country-id/:id')
+  getCountryId(@Param('id') id: number) {
+    return this.countryService.findCountry(id);
   }
 }

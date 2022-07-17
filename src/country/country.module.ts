@@ -9,7 +9,7 @@ import { CountryService } from './services/country/country.service';
 @Module({
   imports: [TypeOrmModule.forFeature([CountryEntity, UserEntity]), HttpModule],
   controllers: [CountryController],
-  providers: [CountryService],
+  providers: [CountryService, CountryEntity],
   exports: [CountryService],
 })
 export class CountryModule {}

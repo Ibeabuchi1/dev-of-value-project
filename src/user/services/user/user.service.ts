@@ -9,7 +9,6 @@ import {
 import { UserEntity } from '../../../user/entities/user.entity';
 import { Repository } from 'typeorm';
 import * as uuid from 'uuid';
-import { CountryEntity } from '../../../country/entities/country.entity';
 import { CountryService } from '../../../country/services/country/country.service';
 
 @Injectable()
@@ -17,12 +16,16 @@ export class UserService {
   constructor(
     @InjectRepository(UserEntity)
     private readonly userRepo: Repository<UserEntity>,
-    @InjectRepository(CountryEntity)
     private readonly countryService: CountryService,
   ) {}
 
-  async getAllUsers(): Promise<UserRO[]> {
-    return await this.userRepo.find({ relations: ['country'] });
+  async getAllUsers(page = 1): Promise<UserRO[]> {
+    const allUsers = await this.userRepo.find({
+      relations: ['country'],
+      take: 10,
+      skip: 10 * (page - 1),
+    });
+    return allUsers;
   }
 
   async register(data: UserDto): Promise<UserEntity> {
@@ -33,13 +36,17 @@ export class UserService {
     }
 
     const country = await this.countryService.findCountry(data.country_id);
-    // console.log(country);
+    if (!country) {
+      throw new HttpException('Country Not Found', HttpStatus.NOT_FOUND);
+    }
 
-    return this.userRepo.save({
-      user_id: uuid.v4(),
-      ...data,
-      country,
-    });
+    return this.userRepo.save(
+      this.userRepo.create({
+        user_id: uuid.v4(),
+        ...data,
+        country,
+      }),
+    );
   }
 
   async login({ email }: LoginDto): Promise<UserRO> {
@@ -57,8 +64,6 @@ export class UserService {
     }
     throw new HttpException('User Not Found', HttpStatus.NOT_FOUND);
   }
-
-  // async getUsersByountry(country: string) {}
 
   async updateUserbyId(id: number, body: UpdateDto): Promise<UserRO[]> {
     const user = await this.userRepo.find({
