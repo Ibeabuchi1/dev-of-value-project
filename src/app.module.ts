@@ -14,7 +14,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       useFactory: (configService: ConfigService) => ({
         type: 'mysql',
         host: configService.get('HOST'), //process.env.HOST,
-        port: +configService.get<number>('DB_PORT'), //parseInt(process.env.DB_PORT),
+        port: +configService.get<number>('DB_PORT') || 3306, //parseInt(process.env.DB_PORT),
         username: 'root', //configService.get('USERNAME'), //process.env.USERNAME,
         password: configService.get('PASSWORD'), //process.env.PASSWORD,
         database: configService.get('DATABASE'), //process.env.DATABASE,
